@@ -7,19 +7,19 @@
 
 CCMRAM uint8_t aghostCcmram[AGHOST_CCMRAM_CTRL_SIZE];
 CCMRAM void *lastByte;
-CCMRAM  aghostMemBlock *firstBlock;
+CCMRAM aghostMemBlock_t *firstBlock;
 
 
 void mergeFreeSpace() {
     //first block
-    aghostMemBlock *ptr = (aghostMemBlock *) &aghostCcmram[0];
+    aghostMemBlock_t *ptr = (aghostMemBlock_t *) &aghostCcmram[0];
     while (1) {
         // finish merge condition
         if (ptr->next == NULL) {
             return;
         }
         //find and merge free space
-        aghostMemBlock *nextPtr = ptr->next;
+        aghostMemBlock_t *nextPtr = ptr->next;
         if (ptr->attr & AGHOST_MEM_BLOCK_ATTR_FREE == AGHOST_MEM_BLOCK_ATTR_FREE &&
             nextPtr->attr & AGHOST_MEM_BLOCK_ATTR_FREE == AGHOST_MEM_BLOCK_ATTR_FREE) {
             ptr->next = nextPtr->next;
@@ -40,7 +40,7 @@ void aghostCcmramInit(void) {
         pos = (char *) pos + 1;
     }
     lastByte = &aghostCcmram[AGHOST_CCMRAM_CTRL_SIZE];
-    firstBlock = (aghostMemBlock *) &aghostCcmram[0];
+    firstBlock = (aghostMemBlock_t *) &aghostCcmram[0];
     firstBlock->before = NULL;
     firstBlock->next = NULL;
     firstBlock->attr = AGHOST_MEM_BLOCK_ATTR_FREE;
@@ -60,13 +60,13 @@ void *aghostCcmramMalloc(size_t size) {
     }
 
     //first block
-    aghostMemBlock *block = firstBlock;
+    aghostMemBlock_t *block = firstBlock;
     if (
             (block->attr & AGHOST_MEM_BLOCK_ATTR_FREE == AGHOST_MEM_BLOCK_ATTR_FREE) &&
             (block->size >= (size + AGHOST_MEM_BLOCK_SIZE))
             ) {
 
-        aghostMemBlock *newBlock = (aghostMemBlock *) ((void *) block + AGHOST_MEM_BLOCK_SIZE + size);
+        aghostMemBlock_t *newBlock = (aghostMemBlock_t *) ((void *) block + AGHOST_MEM_BLOCK_SIZE + size);
         newBlock->before = block;
         newBlock->next = NULL;
         newBlock->size = block->size - AGHOST_MEM_BLOCK_SIZE - size;
@@ -87,7 +87,7 @@ void *aghostCcmramMalloc(size_t size) {
                     (block->attr & AGHOST_MEM_BLOCK_ATTR_FREE == AGHOST_MEM_BLOCK_ATTR_FREE) &&
                     (block->size >= (size + AGHOST_MEM_BLOCK_SIZE))
                     ) {
-                aghostMemBlock *newBlock = (aghostMemBlock *) ((void *) block + AGHOST_MEM_BLOCK_SIZE + size);
+                aghostMemBlock_t *newBlock = (aghostMemBlock_t *) ((void *) block + AGHOST_MEM_BLOCK_SIZE + size);
                 newBlock->before = block;
                 newBlock->next = NULL;
                 newBlock->size = block->size - AGHOST_MEM_BLOCK_SIZE - size;
@@ -132,8 +132,8 @@ void aghostCcmramFree(void *ptr) {
     if (ptr <= (void *) &aghostCcmram[0] || ptr >= lastByte) {
         return;
     }
-    aghostMemBlock *block = (aghostMemBlock *) (ptr - AGHOST_MEM_BLOCK_SIZE);
-    aghostMemBlock *firstPtr = firstBlock;
+    aghostMemBlock_t *block = (aghostMemBlock_t *) (ptr - AGHOST_MEM_BLOCK_SIZE);
+    aghostMemBlock_t *firstPtr = firstBlock;
     //free first block
     if (block == firstPtr) {
         if ((block->attr << 7 >> 7) == AGHOST_MEM_BLOCK_ATTR_USED) {
@@ -150,7 +150,7 @@ void aghostCcmramFree(void *ptr) {
         return;
     }
     //search first block
-    aghostMemBlock *searchBlockPtr = firstPtr;
+    aghostMemBlock_t *searchBlockPtr = firstPtr;
     while (searchBlockPtr->next != NULL) {
         searchBlockPtr = searchBlockPtr->next;
         if (searchBlockPtr == block) {
@@ -160,8 +160,3 @@ void aghostCcmramFree(void *ptr) {
         }
     }
 }
-
-
-
-
-

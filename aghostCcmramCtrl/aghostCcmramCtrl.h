@@ -98,12 +98,12 @@ extern "C"
 
 #ifndef AGHOST_MEM_BLOCK
 #define AGHOST_MEM_BLOCK
-typedef struct aghostMemBlock_t {
-    struct aghostMemBlock_t *before; //4byte
-    struct aghostMemBlock_t *next;   //4byte
+typedef struct aghostMemBlock {
+    struct aghostMemBlock *before; //4byte
+    struct aghostMemBlock *next;   //4byte
     uint8_t attr;                    //1byte
     uint16_t size;                   //2byte
-} aghostMemBlock;
+} aghostMemBlock_t;
 #endif
 
 #ifndef AGHOST_MEM_BLOCK_ATTRS
@@ -116,7 +116,7 @@ typedef struct aghostMemBlock_t {
 
 
 #ifndef AGHOST_MEM_BLOCK_SIZE
-#define AGHOST_MEM_BLOCK_SIZE sizeof(struct aghostMemBlock_t)
+#define AGHOST_MEM_BLOCK_SIZE sizeof(struct aghostMemBlock)
 #endif
 
 
