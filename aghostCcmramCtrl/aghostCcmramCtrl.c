@@ -54,7 +54,7 @@ void *aghostCcmramMalloc(size_t size) {
         size = AGHOST_CCMRAM_CTRL_MIN_ALLOC_SIZE;
     } else {
         if (size % AGHOST_CCMRAM_CTRL_ALLOC_ALIGN_NUM != 0) {
-            size = (size >> AGHOST_CCMRAM_CTRL_ALLOC_MOVEBIT + 1)
+            size = ((size >> AGHOST_CCMRAM_CTRL_ALLOC_MOVEBIT) + 1)
                     << AGHOST_CCMRAM_CTRL_ALLOC_MOVEBIT;
         }
     }
